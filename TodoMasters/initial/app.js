@@ -1,4 +1,5 @@
 import { Command, CommandExecutor, COMMANDS } from "./webapp/command.js";
+import { LocalStorage } from "./webapp/storage.js";
 import { todoList } from "./webapp/TodoList.js";
 
 globalThis.DOM = {};
@@ -31,6 +32,15 @@ document.addEventListener("DOMContentLoaded", () => {
       CommandExecutor.execute(new Command(COMMANDS.DELETE, [todoText]));
     }
   });
+});
 
+document.addEventListener("DOMContentLoaded", () => {
+  // order matters here
+  // 1. Add listener to re-render the list every time it changes
+  // 2. Load the list from the local storage. List change will trigger a render due to step #1
+  // 3. Add subscriber to save list to local storage every time it is changes.
+  //    We want to subscribe only after list was already loaded from the localStorage to avoid unnecessary re-renders
   todoList.addObserver(renderList);
+  LocalStorage.load();
+  todoList.addObserver(LocalStorage.save);
 });

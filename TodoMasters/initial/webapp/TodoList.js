@@ -44,7 +44,11 @@ export class TodoList {
   }
 
   replaceList(list) {
-    this.#data = list;
+    const newList = new Set();
+    for (const item of list) {
+      newList.add(new TodoItem(item.text));
+    }
+    this.#data = newList;
     this.notify();
   }
 }
